@@ -45,34 +45,52 @@
 (require 'datetime)
 (require 's)
 
-(defvar org-incoming--has-roam "" nil)
+(defvar org-incoming--has-roam nil "Indicates whether org-roam is present.")
 (when (require 'org-roam nil 'noerror)
 	(setq org-incoming--has-roam 't))
 
-;; TODO check if all of these are necessary
-(defvar org-incoming--pdf-buf "" nil)
-(defvar org-incoming--pdf-win "" nil)
-(defvar org-incoming--query-buf "" nil)
-(defvar org-incoming--query-win "" nil)
-(defvar org-incoming--org-buf "" nil)
-(defvar org-incoming--org-win "" nil)
-(defvar org-incoming--cur-extracted "" nil)
-(defvar org-incoming--w-name "" nil)
-(defvar org-incoming--w-date "" nil)
+(defvar org-incoming--pdf-buf nil "The buffer the PDF is displayed in.")
+(defvar org-incoming--pdf-win nil "The window the PDF is displayed in.")
+(defvar org-incoming--query-buf nil
+	"The buffer the query phase is displayed in.")
+(defvar org-incoming--query-win nil
+	"The window the query phase is displayed in.")
+(defvar org-incoming--org-buf nil
+	"The buffer the annotation phase is shown in.")
+(defvar org-incoming--org-win nil
+	"The window the annotation phase is shown in.")
+(defvar org-incoming--cur-extracted nil
+	"Text extracted from the PDF currently being processed.")
+(defvar org-incoming--w-name nil "The current 'title' form widget.")
+(defvar org-incoming--w-date nil "The current 'date' form widget.")
 
-(defvar org-incoming--cur-source "" nil)
-;; Phases are: 'inactive -> 'loaded -> 'named -> 'annotated -> 'stored
-;; There's a special phase 'skipped which indicates that processing for the
-;; current item was cancelled and the next one should be loaded
-(defvar org-incoming--cur-phase "" 'inactive)
-(defvar org-incoming--cur-tempdir "" nil)
-(defvar org-incoming--cur-annotation-target "" nil)
-(defvar org-incoming--cur-annotation-file "" nil)
-(defvar org-incoming--cur-pdf-target "" nil)
-(defvar org-incoming--cur-targetdir "" nil)
-(defvar org-incoming--cur-targetdir-pdf "" nil)
-(defvar org-incoming--cur-plist "" nil)
-(defvar org-incoming--skipped '() nil)
+(defvar org-incoming--cur-source nil
+	"The source filename for the currently processed PDF.")
+
+(defvar org-incoming--cur-phase 'inactive
+	"The phase that org-incoming is currently in.
+
+Phases are: 'inactive -> 'loaded -> 'named -> 'annotated -> 'stored
+There's a special phase 'skipped which indicates that processing for the
+current item was cancelled and the next one should be loaded.")
+
+(defvar org-incoming--cur-tempdir nil
+	"The temporary directory for the current PDF.")
+(defvar org-incoming--cur-annotation-target nil
+	"The current target filename for the annotation file.")
+(defvar org-incoming--cur-annotation-file nil
+	"The current annotation file name in the temporary directory.")
+(defvar org-incoming--cur-pdf-target nil
+	"The current target file name for the PDF file.")
+(defvar org-incoming--cur-targetdir nil
+	"The current target directory.")
+(defvar org-incoming--cur-targetdir-pdf nil
+	"The current target PDF file name.")
+(defvar org-incoming--cur-plist nil
+	"The property list describing the current source/destination folder pair.")
+(defvar org-incoming--skipped '()
+	"List of file paths (of incoming PDF files) that were skipped in this \
+session.")
 
 (defcustom org-incoming-annotation-template "
 #+TITLE: ${title}
@@ -194,6 +212,7 @@ Pass the widget as WIDGET.  Returns nil as success and calls 'widget-put
 (define-widget 'org-incoming--datewidget 'editable-field
 	"The date widget used during the query phase of org-incoming."
 	:action 'org-incoming--datewidget--select
+	;; Validation is buggy and disabled for now.
 	;;	:validate 'org-incoming--datewidget--validate
 	:size 10)
 ;;
