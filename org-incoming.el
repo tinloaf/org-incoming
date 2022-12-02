@@ -347,43 +347,20 @@ discarded and the file will not be moved."
 
 	(org-incoming--cleanup-tempdir 't))
 
-(define-minor-mode org-incoming-pdf-mode
-	"Mode active in the PDF buffer of org-incoming.
-
-Should not be set manually."
-	:init-value
-	nil
-	:lighter
-	" RS-P"
-	:keymap
-	'(([q] . org-incoming-quit)))
-
-(defvar org-incoming-query-mode-map
+(defvar org-incoming-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-c") 'org-incoming-complete)
     (define-key map (kbd "C-c C-k") 'org-incoming-quit)
 		(define-key map (kbd "C-c C-s") 'org-incoming-skip)
     map))
+(define-minor-mode org-incoming-mode
+	"Mode active in org-incoming buffers.
 
-(define-minor-mode org-incoming-query-mode ""
-	:init-value
-	nil
-	:lighter
-	" RS-Q")
-
-(defvar org-incoming-org-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") 'org-incoming-complete)
-    (define-key map (kbd "C-c C-k") 'org-incoming-quit)
-		(define-key map (kbd "C-c C-s") 'org-incoming-skip)
-    map))
-(define-minor-mode org-incoming-org-mode
-	"Mode active in the annotation buffer of org-incoming.
 Should not be set manually."
 	:init-value
 	nil
 	:lighter
-	" RS-O")
+	" OI")
 
 (defun org-incoming--validate-form ()
 	"Validate the form of the query phase."
@@ -451,7 +428,7 @@ This initializes the form for the PDF file at FILENAME."
 							(not (buffer-live-p org-incoming--query-buf)))
 			(setq org-incoming--query-buf (get-buffer-create "*org-incoming-query*")))
 		(set-buffer org-incoming--query-buf)
-		(org-incoming-query-mode)
+		(org-incoming-mode)
 		(erase-buffer)
 		(remove-overlays)
 
@@ -526,7 +503,7 @@ Loads the file pointed to by FILENAME."
 	;;		(display-buffer-same-window org-incoming--pdf-buf '())
 	(display-buffer org-incoming--pdf-buf '(display-buffer-same-window . ()))
 	(set-buffer org-incoming--pdf-buf)
-	(org-incoming-pdf-mode)
+	(org-incoming-mode)
 	(org-incoming--init-form filename)
 	(org-incoming--windows-for-query)
 
@@ -621,7 +598,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
 															 org-incoming--cur-annotation-file))
 	(display-buffer org-incoming--org-buf '(display-buffer-same-window . ()))
 	(org-incoming--windows-for-org)
-	(org-incoming-org-mode)
+	(org-incoming-mode)
 	;; we want the temproray directory to be empty afterwards for safe deletion
 	(setq backup-inhibited 't)
 
