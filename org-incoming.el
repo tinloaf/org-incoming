@@ -45,7 +45,7 @@
 (require 'datetime)
 (require 's)
 
-(defvar org-incoming--has-roam nil "Indicates whether org-roam is present.")
+(defvar org-incoming--has-roam nil "Indicates whether `org-roam' is present.")
 (when (require 'org-roam nil 'noerror)
 	(setq org-incoming--has-roam 't))
 
@@ -104,7 +104,7 @@ ${extracted}
 "
 	"Template for creating annotation files.
 
-This will be filled using s.el's s-format, so see the documentation for details.
+This will be filled using s.el's `s-format', so see the documentation for details.
 The available fields are:
 
 ${title} - The title assigned during query
@@ -119,7 +119,7 @@ ${extracted} - Any text extracted from the PDF file"
 
 This is applied to the part of the filename that was
 matched by the first sub-expression of
-org-incoming-parse-date-re.  This uses the 'Java' (or 'ICU')
+`org-incoming-parse-date-re'.  This uses the 'Java' (or 'ICU')
 format syntax as specified by the datetime package.  See here for
 documentation: https://github.com/doublep/datetime/
 
@@ -130,11 +130,11 @@ This can be overridden per folder pair.  Add \":parse-date-pattern
 
 (defcustom org-incoming-parse-date-re "\\(.*\\)"
 	"A regular expression applied to the filename before \
-org-incoming-parse-date-pattern is applied.
+`org-incoming-parse-date-pattern' is applied.
 
 Only the part matched by the first parenthesised sub-expression
 in this regular expression is parsed via
-org-incoming-parse-date-pattern.  Matching is done using
+`org-incoming-parse-date-pattern'.  Matching is done using
 'string-match', see its documentation for regex syntax.
 
 
@@ -152,7 +152,7 @@ Each plist must at least contain \":source <from-directory>\" and
 is treated as a path to a directory that contains incoming PDF
 files, and to-directory is the target directory.  org-incoming
 will place its annotation files in the to-directory, and move the
-PDF files into the org-incoming-pdf-subdir directory inside the
+PDF files into the `org-incoming-pdf-subdir' directory inside the
 to-directory.
 
 Additionally, the plist for each folder pair can contain
@@ -164,7 +164,7 @@ details."
 
 (defcustom org-incoming-pdf-subdir "pdfs"
 	"Name of the directory inside the to-directory (see \
-org-incoming-dirs documentation) into which PDF files should be \
+`org-incoming-dirs' documentation) into which PDF files should be \
 moved.
 
 This can be overridden per folder pair.  Add \":pdf-subdir <setting>\" to
@@ -172,8 +172,8 @@ the folder pair plist."
 	:group 'org-incoming
 	:type '(string))
 (defcustom org-incoming-use-roam nil
-	"Set to non-nil to create org-roam files instead of plain org \
-files as annotations.  This requires org-roam to be installed.
+	"Set to non-nil to create `org-roam' files instead of plain org \
+files as annotations.  This requires `org-roam' to be installed.
 
 This can be overridden per folder pair.  Add \":use-roam <setting>\" to
 the folder pair plist."
@@ -186,7 +186,7 @@ the folder pair plist."
 (defun org-incoming--datewidget--select (widget &optional _event)
 	"Function called when selecting a new date.
 
-Opens a calenderbelow the current window, using org-read-date.  Pass the
+Opens a calenderbelow the current window, using `org-read-date'.  Pass the
 actual widget as WIDGET."
 	(split-window-below -8)
 	(let ((date (org-read-date)))
@@ -239,7 +239,7 @@ problematic characters."
 	(replace-regexp-in-string "[#<>$+%/\\!`&'|{}?\"=:]" "_" fname))
 
 (defun org-incoming--cleanup-tempdir (&optional force)
-	"Clean up the temporary directory created for by org-incoming--new-tempdir.
+	"Clean up the temporary directory created for by `org-incoming--new-tempdir'.
 
 Set FORCE to non-nil to clean up the directory even if it still
 contains files."
@@ -305,7 +305,7 @@ moved without permissions being transferred."
 	"Skip the incoming file currently being processed.
 
 The file is skipped for the current org-incoming session.  If you quit
-org-incoming and cal org-incoming-start again, the file will be
+org-incoming and cal `org-incoming-start' again, the file will be
 processed again."
 	(interactive)
 	(unless (or (eq org-incoming--cur-phase 'loaded)
@@ -519,7 +519,7 @@ Loads the file pointed to by FILENAME."
 	"Extract text from the PDF file.
 
 This extracts text from the PDF file at FNAME and sets the variable
-org-incoming--cur-extracted accordingly."
+`org-incoming--cur-extracted' accordingly."
 	(setq org-incoming--cur-extracted "")
 	(condition-case nil
 			(with-temp-buffer
@@ -550,7 +550,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
       (write-file org-incoming--cur-annotation-file))))
 
 (defun org-incoming--create-roam-file (cur-name cur-date)
-	"Create a new org-roam file template for annotation.
+	"Create a new `org-roam' file template for annotation.
 
 Sets title and date from CUR-NAME and CUR-DATE."
 	;; org-id-get-create needs a buffer visiting a file.
