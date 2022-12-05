@@ -30,8 +30,8 @@ folders sequentially. Each file passes through two phases:
 2. The "annotation" phase
 
 Each phase can be completed (going to the next phase or to the next incoming file) by pressing `C-c
-C-c`. When you complete the annotation phase for a file, the PDF file will be moved to the correct
-location and the annotation file will be created.
+C-c` or invoking `org-incoming-complete`. When you complete the annotation phase for a file, the PDF
+file will be moved to the correct location and the annotation file will be created.
 
 You can quit your org-incoming session at any point by invoking `org-incoming-quit` (bound to
 `C-c C-k` by default).
@@ -48,8 +48,9 @@ the date [parsed automatically](#optional-configuration) from the filename of th
 to jump between the form fields, and pressing `Return` while the date field is focussed will bring
 up a calendar for date selection.
 
-Press `C-c C-c` to complete the query phase. If you want to skip the file for now, press `C-c
-C-s`. If you want to quit your org-incoming session, press `C-c C-k`.
+Press `C-c C-c` (or `M-x org-incoming-complete RET`) to complete the query phase. If you want to
+skip the file for now, press `C-c C-s` (`M-x org-incoming-skip RET`). If you want to quit your
+org-incoming session, press `C-c C-k` (`M-x org-incoming-quit RET`).
 
 ## Annotation
 
@@ -64,13 +65,19 @@ link to the PDF file, resp. where the PDF file will be moved.
 Depending on your [configuration](#configuration), the annotation file will also contain any automatically
 extracted text, and may be a plain org file, or an org-roam node.
 
-Press `C-c C-c` to complete the annotation phase and complete processing this file. org-incoming
-will then automatically proceed with the next file. If you want to skip the file for now, press `C-c
-C-s`. If you want to quit your org-incoming session, press `C-c C-k`.
+Press `C-c C-c` (`M-x org-incoming-complete RET`)to complete the annotation phase and complete
+processing this file. org-incoming will then automatically proceed with the next file. If you want
+to skip the file for now, press `C-c C-s` (`M-x org-incoming-skip RET`). If you want to quit your
+org-incoming session, press `C-c C-k` (`M-x org-incoming-quit RET`).
 
 ## Important functions
 ### org-incoming-start
 Start a new org-incoming session.
+
+### org-incoming-complete
+Complete the current phase, advancing to the next. If the current phase is the annotation phase, the
+PDF file will be moved to its destination, the annotation file will be created at its destination,
+and the next PDF will be loaded (if any remain).
 
 ### org-incoming-quit
 Quit the current org-incoming session. Any input from the current query or annotation phase will be
