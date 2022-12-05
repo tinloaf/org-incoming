@@ -292,6 +292,7 @@ moved without permissions being transferred."
 	(org-incoming--cleanup-tempdir)
 	(setq org-incoming--cur-tempdir (make-temp-file "org-incoming" 't)))
 
+;;;###autoload
 (defun org-incoming-complete ()
 	"Complete the current phase."
 	(interactive)
@@ -299,6 +300,7 @@ moved without permissions being transferred."
 				((eq org-incoming--cur-phase 'annotated) (org-incoming--store))
 				(t (error "Current state not allowed for org-incoming-complete"))))
 
+;;;###autoload
 (defun org-incoming-skip ()
 	"Skip the incoming file currently being processed.
 
@@ -327,6 +329,7 @@ processed again."
 
 	(org-incoming--next))
 
+;;;###autoload
 (defun org-incoming-quit ()
 	"Quit org-incoming.
 
@@ -723,6 +726,7 @@ by the plist DIR-PLIST."
 	(setq org-incoming--pdf-win
 				(display-buffer org-incoming--pdf-buf '(display-buffer-pop-up-window))))
 
+;;;###autoload
 (defun org-incoming-start ()
 	"Start a new org-incoming session."
 	(interactive)
