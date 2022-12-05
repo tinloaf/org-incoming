@@ -352,9 +352,9 @@ discarded and the file will not be moved."
 
 (defvar org-incoming-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") 'org-incoming-complete)
-    (define-key map (kbd "C-c C-k") 'org-incoming-quit)
-		(define-key map (kbd "C-c C-s") 'org-incoming-skip)
+    (define-key map (kbd "C-c C-c") #'org-incoming-complete)
+    (define-key map (kbd "C-c C-k") #'org-incoming-quit)
+		(define-key map (kbd "C-c C-s") #'org-incoming-skip)
     map))
 (define-minor-mode org-incoming-mode
 	"Mode active in org-incoming buffers.
@@ -438,8 +438,8 @@ This initializes the form for the PDF file at FILENAME."
 		(widget-insert (format "File: %s\n\n" org-incoming--cur-source))
 		(widget-insert "Title: ")
 		(setq org-incoming--w-name (widget-create 'editable-field
-																					 :size 20
-																					 :value " "))
+																							:size 20
+																							:value " "))
 		(widget-insert "\nDate: ")
 		(setq org-incoming--w-date (widget-create 'org-incoming--datewidget
 																							:size 10
@@ -543,7 +543,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
                     ("link" . ,org-incoming--cur-pdf-target)
                     ("extracted" . ,org-incoming--cur-extracted)))
          (content (s-format (org-incoming--get-setting "annotation-template")
-                            'aget context)))
+                            #'aget context)))
     
     (with-temp-buffer
       (insert content)
