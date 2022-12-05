@@ -106,8 +106,8 @@ ${extracted}
 "
 	"Template for creating annotation files.
 
-This will be filled using s.el's `s-format', so see the documentation for details.
-The available fields are:
+This will be filled using s.el's `s-format', so see the documentation for
+ details.  The available fields are:
 
 ${title} - The title assigned during query
 ${date} - The date assigned during query
@@ -550,7 +550,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
       (write-file org-incoming--cur-annotation-file))))
 
 (defun org-incoming--create-roam-file ()
-	"Converts the already-created annotation file into an `org-roam` node."
+	"Convert the already-created annotation file into an `org-roam` node."
 	;; org-id-get-create needs a buffer visiting a file.
 	(setq org-incoming--temp-buf (find-file-noselect
 																org-incoming--cur-annotation-file))
