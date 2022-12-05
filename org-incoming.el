@@ -261,8 +261,8 @@ moved without permissions being transferred."
 					(errdata (cdr errvar)))
 			;; Make sure the error we're handling is really a 'copying permissions'
 			;; error.  If not, rethrow
-			(when (not (and (string-equal (nth 0 errdata) "Copying permissions to")
-									    (string-equal(nth 1 errdata) "Operation not permitted")))
+			(unless (and (string-equal (nth 0 errdata) "Copying permissions to")
+									 (string-equal(nth 1 errdata) "Operation not permitted"))
 				(signal errsym errdata))
 			;; Make sure that the file actually arrived at its destination, otherwise
 			;; deleting the source would cause data loss.
@@ -275,7 +275,7 @@ moved without permissions being transferred."
 			;;
 			;; Yes, in the worst case this could race with something else creating
 			;; dest, but that's a user error.
-			(when (not (file-exists-p dest))
+			(unless (file-exists-p dest)
 				(signal errsym errdata))
 			;; If the file exists at the destination, complete the 'move' by deleting
 			;; the source.
@@ -306,8 +306,8 @@ The file is skipped for the current org-incoming session.  If you quit
 org-incoming and cal org-incoming-start again, the file will be
 processed again."
 	(interactive)
-	(when (not (or (eq org-incoming--cur-phase 'loaded)
-								 (eq org-incoming--cur-phase 'named)))
+	(unless (or (eq org-incoming--cur-phase 'loaded)
+							(eq org-incoming--cur-phase 'named))
 		(error "Current state not allowed for org-incoming--skip"))
 
 	(when (window-live-p org-incoming--query-win)
@@ -364,17 +364,17 @@ Should not be set manually."
 
 (defun org-incoming--validate-form ()
 	"Validate the form of the query phase."
-	(when (not (eq org-incoming--cur-phase 'loaded))
+	(unless (eq org-incoming--cur-phase 'loaded)
 		(error "Current state not allowed for org-incoming--validate-form"))
 	(let ((title-err (widget-apply org-incoming--w-name :validate))
 				(date-err (widget-apply org-incoming--w-date :validate))
 				(errmsg nil)
 				(form-invalid nil))
-		(when (not (eq title-err nil))
+		(unless (eq title-err nil)
 			(message (widget-get title-err :error))
 			(setq errmsg (widget-get title-err :error))
 			(setq form-invalid 't))
-		(when (not (eq date-err nil))
+		(unless (eq date-err nil)
 			(message (widget-get date-err :error))
 			(setq errmsg (widget-get date-err :error))
 			(setq form-invalid 't))
@@ -461,7 +461,7 @@ This initializes the form for the PDF file at FILENAME."
 
 (defun org-incoming--store ()
 	"Complete the annotation phase and store annotation and PDF."
-	(when (not (eq org-incoming--cur-phase 'annotated))
+	(unless (eq org-incoming--cur-phase 'annotated)
 		(error "Current state not allowed for org-incoming--store"))
 
 	(let ((pdfdir (file-name-directory org-incoming--cur-pdf-target))
@@ -487,9 +487,9 @@ This initializes the form for the PDF file at FILENAME."
 	"Load a new PDF file and initiate the query phase.
 
 Loads the file pointed to by FILENAME."
-	(when (not (or (eq org-incoming--cur-phase 'inactive)
-								 (eq org-incoming--cur-phase 'skipped)
-								 (eq org-incoming--cur-phase 'stored)))
+	(unless (or (eq org-incoming--cur-phase 'inactive)
+							(eq org-incoming--cur-phase 'skipped)
+							(eq org-incoming--cur-phase 'stored))
 		(error "Current state not allowed for org-incoming--load"))
 
 	(message (format "Loading %s" filename))
@@ -525,7 +525,7 @@ org-incoming--cur-extracted accordingly."
 					;; Delete the bogus end output of pdftotext
 					(goto-char (point-max))
 					(let ((ctrl-l-pos (search-backward "" nil 't)))
-						(when (not (eq ctrl-l-pos nil))
+						(unless (eq ctrl-l-pos nil)
 							(kill-region ctrl-l-pos (point-max))))
 					(setq org-incoming--cur-extracted (buffer-string)))
 		(file-missing (message "pdftotext not found. Install pdftotext to enable \
@@ -585,14 +585,14 @@ Sets title and date from CUR-NAME and CUR-DATE."
 	"Initialize the annotation phase.
 
 Sets title and date from CUR-NAME and CUR-DATE."
-	(when (not (eq org-incoming--cur-phase 'named))
+	(unless (eq org-incoming--cur-phase 'named)
 		(error "Current state not allowed for org-incoming--annotate"))
 
 	(org-incoming--extract-text org-incoming--cur-source)
 	(org-incoming--create-org-file cur-name cur-date)
 	
-	(if (not (eq (org-incoming--get-setting "use-roam") nil))
-			(org-incoming--create-roam-file cur-name cur-date))
+	(unless (eq (org-incoming--get-setting "use-roam") nil)
+		(org-incoming--create-roam-file cur-name cur-date))
 
 	(setq org-incoming--org-buf (find-file-noselect
 															 org-incoming--cur-annotation-file))
@@ -632,7 +632,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
 (defun org-incoming--handle-form ()
 	"Handle a completed form from the query phase."
 	(catch 'myexit
-		(when (not (eq org-incoming--cur-phase 'loaded))
+		(unless (eq org-incoming--cur-phase 'loaded)
 			(error "Current state not allowed for org-incoming--handle-form"))
 
 		(when (org-incoming--validate-form)
@@ -659,17 +659,17 @@ Sets title and date from CUR-NAME and CUR-DATE."
 (defun org-incoming--next-in-dir (dir-plist)
 	"Start processing the next PDF file in the folder pair indicated \
 by the plist DIR-PLIST."
-	(when (not (or (eq org-incoming--cur-phase 'inactive)
-								 (eq org-incoming--cur-phase 'skipped)
-								 (eq org-incoming--cur-phase 'stored)))
+	(unless (or (eq org-incoming--cur-phase 'inactive)
+							(eq org-incoming--cur-phase 'skipped)
+							(eq org-incoming--cur-phase 'stored))
 		(error "Current state not allowed for org-incoming--next-in-dir"))
 
 	(let ((sourcedir (plist-get dir-plist :source))
 				(targetdir (plist-get dir-plist :target)))
 
-		(when (not (stringp sourcedir))
+		(unless (stringp sourcedir)
 			(error "Sourcedir must be string"))
-		(when (not (stringp targetdir))
+		(unless (stringp targetdir)
 			(error "Targetdir must be string"))
 
 		(setq org-incoming--cur-plist dir-plist)
@@ -694,9 +694,9 @@ by the plist DIR-PLIST."
 
 (defun org-incoming--next ()
 	"Start processing the next available PDF file."
-	(when (not (or (eq org-incoming--cur-phase 'inactive)
-								 (eq org-incoming--cur-phase 'skipped)
-								 (eq org-incoming--cur-phase 'stored)))
+	(unless (or (eq org-incoming--cur-phase 'inactive)
+							(eq org-incoming--cur-phase 'skipped)
+							(eq org-incoming--cur-phase 'stored))
 		(error "Current state not allowed for org-incoming--next"))
 
 	(-each-while org-incoming-dirs
