@@ -59,6 +59,8 @@
 	"The buffer the annotation phase is shown in.")
 (defvar org-incoming--org-win nil
 	"The window the annotation phase is shown in.")
+(defvar org-incoming--temp-buf nil
+	"A temporary buffer used for various things.")
 (defvar org-incoming--cur-extracted nil
 	"Text extracted from the PDF currently being processed.")
 (defvar org-incoming--w-name nil "The current 'title' form widget.")
@@ -402,8 +404,6 @@ This uses the 'parse-date-pattern' and 'parse-date-re' settings."
 				_errvar
 				(progn
 					(let* ((pattern (org-incoming--get-setting "parse-date-pattern"))
-								 (rexp (org-incoming--get-setting "parse-date-re"))
-								 (regexed-fname-pos (string-match rexp fname))
 								 (regexed-fname (match-string 1 fname)))
 						(when (eq regexed-fname nil)
 							(throw 'myexit "parsing failed"))
@@ -549,10 +549,8 @@ Sets title and date from CUR-NAME and CUR-DATE."
       (insert content)
       (write-file org-incoming--cur-annotation-file))))
 
-(defun org-incoming--create-roam-file (cur-name cur-date)
-	"Create a new `org-roam' file template for annotation.
-
-Sets title and date from CUR-NAME and CUR-DATE."
+(defun org-incoming--create-roam-file ()
+	"Converts the already-created annotation file into an `org-roam` node."
 	;; org-id-get-create needs a buffer visiting a file.
 	(setq org-incoming--temp-buf (find-file-noselect
 																org-incoming--cur-annotation-file))
@@ -595,7 +593,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
 	(org-incoming--create-org-file cur-name cur-date)
 	
 	(unless (eq (org-incoming--get-setting "use-roam") nil)
-		(org-incoming--create-roam-file cur-name cur-date))
+		(org-incoming--create-roam-file))
 
 	(setq org-incoming--org-buf (find-file-noselect
 															 org-incoming--cur-annotation-file))
@@ -708,7 +706,7 @@ by the plist DIR-PLIST."
 				;; *not* successfully load a file
 				(eq (org-incoming--next-in-dir dir) nil))
 		;; The fn of -each-while is empty, we got our work done in the predicate
-		(lambda (dir))))
+		(lambda (_dir))))
 
 (defun org-incoming--windows-for-query ()
 	"Set up the windows and buffers of the active frame for the query phase."
