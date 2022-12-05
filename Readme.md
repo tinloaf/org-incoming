@@ -40,11 +40,11 @@ You can quit your org-incoming session at any point by invoking `org-incoming-qu
 
 In the query phase, your emacs frame should look like this:
 
-TODO IMAGE
+![Screenshot of the org-incoming query phase](https://raw.githubusercontent.com/tinloaf/org-incoming/main/doc/screenshot_query.png)
 
 The PDF in displayed in one window, and the other window contains the query buffer. The query buffer
-contains an form in which you should assign the PDF a title and a date. Note that you can TODO have
-the date parsed automatically from the filename of the incoming file. You can use `Tab` and `S-Tab`
+contains an form in which you should assign the PDF a title and a date. Note that you can have
+the date [parsed automatically](#optional-configuration) from the filename of the incoming file. You can use `Tab` and `S-Tab`
 to jump between the form fields, and pressing `Return` while the date field is focussed will bring
 up a calendar for date selection.
 
@@ -55,13 +55,13 @@ C-s`. If you want to quit your org-incoming session, press `C-c C-k`.
 
 In the annotation phase, your emacs frame should look like this:
 
-TODO IMAGE
+![Screenshot of the org-incoming annotation phase](https://raw.githubusercontent.com/tinloaf/org-incoming/main/doc/screenshot_annotation.png)
 
 Here you still see the PDF on the one side, and the annotation file to be created on the other
 side. Note that the annotation file is pre-filled with the title and date you gave and contains a
 link to the PDF file, resp. where the PDF file will be moved.
 
-Depending on your TODO configuration, the annotation file will also contain any automatically
+Depending on your [configuration](#configuration), the annotation file will also contain any automatically
 extracted text, and may be a plain org file, or an org-roam node.
 
 Press `C-c C-c` to complete the annotation phase and complete processing this file. org-incoming
