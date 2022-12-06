@@ -109,7 +109,7 @@ See this example:
 ~~~lisp
 (setq org-incoming-dirs '((:source "/home/user/incoming/folder1" :target "/home/user/org/archive")
                           (:source "/home/user/incoming/folder2" :target "/home/user/org/archive" :use-roam 't)
-		                  (:source "/home/user/incoming/folder3" :target "/home/user/org/todos" :pdf-subdir "originals")))
+                          (:source "/home/user/incoming/folder3" :target "/home/user/org/todos" :pdf-subdir "originals")))
 ~~~
 
 With this configuration, all PDF files in `~/incoming/folder1` _and_ `~/incoming/folder2` will have
