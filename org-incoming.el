@@ -543,7 +543,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
                     ("link" . ,org-incoming--cur-pdf-target)
                     ("extracted" . ,org-incoming--cur-extracted)))
          (content (s-format (org-incoming--get-setting "annotation-template")
-                            #'aget context)))
+                            'aget context)))
     
     (with-temp-buffer
       (insert content)
