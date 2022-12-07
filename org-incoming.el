@@ -404,6 +404,8 @@ This uses the 'parse-date-pattern' and 'parse-date-re' settings."
 				_errvar
 				(progn
 					(let* ((pattern (org-incoming--get-setting "parse-date-pattern"))
+								 (rexp (org-incoming--get-setting "parse-date-re"))
+								 (_regexed-fname-pos (string-match rexp fname))
 								 (regexed-fname (match-string 1 fname)))
 						(when (eq regexed-fname nil)
 							(throw 'myexit "parsing failed"))
