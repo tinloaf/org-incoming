@@ -95,14 +95,14 @@ There is one mandatory configuration setting:
 
  * `org-incoming-dirs`: A list of plists describing the source/target pairs and any settings overrides for them.
 
-Each plist must at least contain ":source <from-directory>" and ":target <to-directory>".  For each
+Each plist must at least contain `:source <from-directory>` and `:target <to-directory>`.  For each
 such pair, from-directory is treated as a path to a directory that contains incoming PDF files, and
 to-directory is the target directory.  org-incoming will place its annotation files in the
 to-directory, and move the PDF files into the org-incoming-pdf-subdir directory inside the
 to-directory.
 
 Additionally, the plist for each folder pair can contain overrides for almost all of org-incoming's
-settings, in the form of ":<setting-name> <value>".  See the respective settings for details.
+settings, in the form of `:<setting-name> <value>`.  See the respective settings for details.
 
 See this example:
 
@@ -121,11 +121,11 @@ annotations in `~/org/todos` and their PDFs in `~/org/todos/originals`.
 ## Optional configuration
 
 Optionally configurable variables are:
- * `org-incoming-parse-date-pattern`
- * `org-incoming-parse-date-re`
- * `org-incoming-pdf-subdir`
- * `org-incoming-use-roam`
- * `org-incoming-annotation-template`
+ * `org-incoming-parse-date-pattern` (or `:parse-date-pattern`)
+ * `org-incoming-parse-date-re` (or `:parse-date-re`)
+ * `org-incoming-pdf-subdir` (or `:pdf-subdir`)
+ * `org-incoming-use-roam` (or `:use-roam`)
+ * `org-incoming-annotation-template` (or `:annotation-template`)
 
 Template configuration is explained below. For everything else, please see their respective variable
 documentation (`M-x describe-variable <variablename> RET`) for documentation. Each of these
