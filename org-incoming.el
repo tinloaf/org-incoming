@@ -44,6 +44,7 @@
 (require 'dash)
 (require 'datetime)
 (require 's)
+(require 'org-id)
 
 (defvar org-incoming--has-roam nil "Indicates whether `org-roam' is present.")
 (when (require 'org-roam nil 'noerror)
