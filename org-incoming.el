@@ -254,41 +254,52 @@ contains files."
     ;; specify 'recursive' to avoid accidentially deleting too much.
     (delete-directory org-incoming--cur-tempdir force)))
 
+(defun org-incoming--handle-file-error (errvar source dest)
+  "Function to handle errors during file renaming.
+
+This function gracefully handles the error that the permissions
+cannot be set correctly at the destination, which happens often
+when moving files across different filesystems.  In this case,
+permissions are just ignored.  All other errors are re-raised.
+
+This expects the error variable of a `condition-case` to be passed
+in ERRVAR, the source file path to be passed in SOURCE and the
+destination path to be passed in DEST."
+  (let ((errsym (car errvar))
+        (errdata (cdr errvar)))
+    ;; Make sure the error we're handling is really a 'copying permissions'
+    ;; error.  If not, rethrow
+    (unless (and (string-equal (nth 0 errdata) "Copying permissions to")
+                 (string-equal(nth 1 errdata) "Operation not permitted"))
+      (signal errsym errdata))
+    ;; Make sure that the file actually arrived at its destination, otherwise
+    ;; deleting the source would cause data loss.
+    ;;
+    ;; Note that we don't check here that source and dest are identical files
+    ;; now.  Since we called rename-file without OK-IF-ALREADY-EXISTS, it
+    ;; would have thrown a (different) error if the destination had already
+    ;; existed.  Thus, if it exists now, we may assume that it's a copy of
+    ;; source.
+    ;;
+    ;; Yes, in the worst case this could race with something else creating
+    ;; dest, but that's a user error.
+    (unless (file-exists-p dest)
+      (signal errsym errdata))
+    ;; If the file exists at the destination, complete the 'move' by deleting
+    ;; the source.
+    (when (file-exists-p source)
+      (delete-file source))))
+
+
 (defun org-incoming--permissive-rename-file (source dest)
   "Move a file like 'rename-file', but handle the error that \
 permissions cannot be set at the target.
 
 Moves SOURCE to DEST.  In the case permissions cannot be set, the file is
 moved without permissions being transferred."
-  (defun org-incoming--handle-file-error (errvar)
-    (let ((errsym (car errvar))
-          (errdata (cdr errvar)))
-      ;; Make sure the error we're handling is really a 'copying permissions'
-      ;; error.  If not, rethrow
-      (unless (and (string-equal (nth 0 errdata) "Copying permissions to")
-                   (string-equal(nth 1 errdata) "Operation not permitted"))
-        (signal errsym errdata))
-      ;; Make sure that the file actually arrived at its destination, otherwise
-      ;; deleting the source would cause data loss.
-      ;;
-      ;; Note that we don't check here that source and dest are identical files
-      ;; now.  Since we called rename-file without OK-IF-ALREADY-EXISTS, it
-      ;; would have thrown a (different) error if the destination had already
-      ;; existed.  Thus, if it exists now, we may assume that it's a copy of
-      ;; source.
-      ;;
-      ;; Yes, in the worst case this could race with something else creating
-      ;; dest, but that's a user error.
-      (unless (file-exists-p dest)
-        (signal errsym errdata))
-      ;; If the file exists at the destination, complete the 'move' by deleting
-      ;; the source.
-      (when (file-exists-p source)
-        (delete-file source))))
-
   (condition-case errvar
       (rename-file source dest)
-    (file-error (org-incoming--handle-file-error errvar))))
+    (file-error (org-incoming--handle-file-error errvar source dest))))
 
 
 (defun org-incoming--new-tempdir ()
