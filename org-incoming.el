@@ -247,7 +247,7 @@ Set FORCE to non-nil to clean up the directory even if it still
 contains files."
   (when (and (not (null org-incoming--cur-tempdir))
              (file-directory-p org-incoming--cur-tempdir))
-    (message (format "Deleting %s" org-incoming--cur-tempdir))
+    (message "Deleting %s" org-incoming--cur-tempdir)
     ;; The temp directory should be empty at this point.  By default, don't
     ;; specify 'recursive' to avoid accidentially deleting too much.
     (delete-directory org-incoming--cur-tempdir force)))
@@ -497,7 +497,7 @@ Loads the file pointed to by FILENAME."
               (eq org-incoming--cur-phase 'stored))
     (error "Current state not allowed for org-incoming--load"))
 
-  (message (format "Loading %s" filename))
+  (message "Loading %s" filename)
 
   (setq org-incoming--cur-source filename)
   (when (and (bound-and-true-p org-incoming--pdf-buf)
@@ -620,17 +620,17 @@ Sets title and date from CUR-NAME and CUR-DATE."
          (target-pdfname (org-incoming--find-free-filename
                           org-incoming--cur-targetdir-pdf target-pdfname-base)))
 
-      (when (file-exists-p target-pdfname)
-        (error (format "File '%s' exists" target-pdfname)))
-      (when (file-exists-p target-filename)
-        (error (format "File '%s' exists" target-filename)))
+    (when (file-exists-p target-pdfname)
+      (error "File '%s' exists" target-pdfname))
+    (when (file-exists-p target-filename)
+      (error "File '%s' exists" target-filename))
 
-      (org-incoming--new-tempdir)
+    (org-incoming--new-tempdir)
 
-      (setq org-incoming--cur-annotation-target target-filename)
-      (setq org-incoming--cur-pdf-target target-pdfname)
-      (setq org-incoming--cur-annotation-file
-            (expand-file-name "annotation.org" org-incoming--cur-tempdir))))
+    (setq org-incoming--cur-annotation-target target-filename)
+    (setq org-incoming--cur-pdf-target target-pdfname)
+    (setq org-incoming--cur-annotation-file
+          (expand-file-name "annotation.org" org-incoming--cur-tempdir))))
 
 (defun org-incoming--handle-form ()
   "Handle a completed form from the query phase."
