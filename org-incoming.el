@@ -228,7 +228,7 @@ This can either come from the variable org-incoming-SETTING-NAME or from
 a :SETTING-NAME in the current folder pair plist."
   (let ((variable-name (format "org-incoming-%s" setting-name))
         (plist-symbol-name (format ":%s" setting-name)))
-    (if (and (not (eq org-incoming--cur-plist nil))
+    (if (and (not (null org-incoming--cur-plist))
              (plist-get org-incoming--cur-plist (intern plist-symbol-name)))
         ;; Symbol is in plist: use that value
         (plist-get org-incoming--cur-plist (intern plist-symbol-name))
@@ -245,7 +245,7 @@ problematic characters."
 
 Set FORCE to non-nil to clean up the directory even if it still
 contains files."
-  (when (and (not (eq org-incoming--cur-tempdir nil))
+  (when (and (not (null org-incoming--cur-tempdir))
              (file-directory-p org-incoming--cur-tempdir))
     (message (format "Deleting %s" org-incoming--cur-tempdir))
     ;; The temp directory should be empty at this point.  By default, don't
@@ -375,11 +375,11 @@ Should not be set manually."
         (date-err (widget-apply org-incoming--w-date :validate))
         (errmsg nil)
         (form-invalid nil))
-    (unless (eq title-err nil)
+    (unless (null title-err)
       (message (widget-get title-err :error))
       (setq errmsg (widget-get title-err :error))
       (setq form-invalid 't))
-    (unless (eq date-err nil)
+    (unless (null date-err)
       (message (widget-get date-err :error))
       (setq errmsg (widget-get date-err :error))
       (setq form-invalid 't))
@@ -396,8 +396,8 @@ Should not be set manually."
 
 This uses the 'parse-date-pattern' and 'parse-date-re' settings."
   (catch 'myexit
-    (when (or (eq nil org-incoming-parse-date-pattern)
-              (eq nil org-incoming-parse-date-re))
+    (when (or (null org-incoming-parse-date-pattern)
+              (null org-incoming-parse-date-re))
       (throw 'myexit ""))
 
     (condition-case
@@ -407,7 +407,7 @@ This uses the 'parse-date-pattern' and 'parse-date-re' settings."
                  (rexp (org-incoming--get-setting "parse-date-re"))
                  (_regexed-fname-pos (string-match rexp fname))
                  (regexed-fname (match-string 1 fname)))
-            (when (eq regexed-fname nil)
+            (when (null regexed-fname)
               (throw 'myexit "parsing failed"))
             (let*
                 ((parser (datetime-parser-to-float 'java pattern
@@ -525,14 +525,14 @@ This extracts text from the PDF file at FNAME and sets the variable
   (setq org-incoming--cur-extracted "")
   (condition-case nil
       (with-temp-buffer
-          (call-process "pdftotext" nil (current-buffer) nil fname "-")
+        (call-process "pdftotext" nil (current-buffer) nil fname "-")
 
-          ;; Delete the bogus end output of pdftotext
-          (goto-char (point-max))
-          (let ((ctrl-l-pos (search-backward "" nil 't)))
-            (unless (eq ctrl-l-pos nil)
-              (kill-region ctrl-l-pos (point-max))))
-          (setq org-incoming--cur-extracted (buffer-string)))
+        ;; Delete the bogus end output of pdftotext
+        (goto-char (point-max))
+        (let ((ctrl-l-pos (search-backward "" nil 't)))
+          (unless (null ctrl-l-pos)
+            (kill-region ctrl-l-pos (point-max))))
+        (setq org-incoming--cur-extracted (buffer-string)))
     (file-missing (message "pdftotext not found. Install pdftotext to enable \
 text extraction."))))
 
@@ -594,7 +594,7 @@ Sets title and date from CUR-NAME and CUR-DATE."
   (org-incoming--extract-text org-incoming--cur-source)
   (org-incoming--create-org-file cur-name cur-date)
   
-  (unless (eq (org-incoming--get-setting "use-roam") nil)
+  (unless (null (org-incoming--get-setting "use-roam"))
     (org-incoming--create-roam-file))
 
   (setq org-incoming--org-buf (find-file-noselect
@@ -706,7 +706,7 @@ by the plist DIR-PLIST."
       (lambda (dir)
         ;; 'yes' means 'continue', so we must return non-nil if we did
         ;; *not* successfully load a file
-        (eq (org-incoming--next-in-dir dir) nil))
+        (null (org-incoming--next-in-dir dir)))
     ;; The fn of -each-while is empty, we got our work done in the predicate
     (lambda (_dir))))
 
