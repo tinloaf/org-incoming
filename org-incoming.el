@@ -65,8 +65,8 @@
   "A temporary buffer used for various things.")
 (defvar org-incoming--cur-extracted nil
   "Text extracted from the PDF currently being processed.")
-(defvar org-incoming--w-name nil "The current 'title' form widget.")
-(defvar org-incoming--w-date nil "The current 'date' form widget.")
+(defvar org-incoming--w-name nil "The current title form widget.")
+(defvar org-incoming--w-date nil "The current date form widget.")
 
 (defvar org-incoming--cur-source nil
   "The source filename for the currently processed PDF.")
@@ -74,8 +74,9 @@
 (defvar org-incoming--cur-phase 'inactive
   "The phase that org-incoming is currently in.
 
-Phases are: 'inactive -> 'loaded -> 'named -> 'annotated -> 'stored
-There's a special phase 'skipped which indicates that processing for the
+Phases are: \\='inactive -> \\='loaded -> \\='named -> \\='annotated ->
+\\='stored
+There's a special phase \\='skipped which indicates that processing for the
 current item was cancelled and the next one should be loaded.")
 
 (defvar org-incoming--cur-tempdir nil
@@ -133,23 +134,24 @@ This can be overridden per folder pair.  Add \":parse-date-pattern
   :type '(string))
 
 (defcustom org-incoming-parse-date-re "\\(.*\\)"
-  "A regular expression applied to the filename before \
+  "Expression applied to the filename before patternmatching.
+
+This expression is applied before
 `org-incoming-parse-date-pattern' is applied.
 
 Only the part matched by the first parenthesised sub-expression
 in this regular expression is parsed via
 `org-incoming-parse-date-pattern'.  Matching is done using
-'string-match', see its documentation for regex syntax.
+`string-match', see its documentation for regex syntax.
 
 
-This can be overridden per folder pair.  Add \":parse-date-re <regex>\" to
-the folder pair plist."
+This can be overridden per folder pair.  Add \":parse-date-re
+<regex>\" to the folder pair plist."
   :group 'org-incoming
   :type '(regexp))
 
 (defcustom org-incoming-dirs nil
-  "A list of plists describing the source/target pairs and any \
-settings overrides for them.
+  "List of plists describing the source/target pairs.
 
 Each plist must at least contain \":source <from-directory>\" and
 \":target <to-directory>\".  For each such pair, from-directory
@@ -167,8 +169,10 @@ details."
   :type '(repeat (plist)))
 
 (defcustom org-incoming-pdf-subdir "pdfs"
-  "Name of the directory inside the to-directory (see \
-`org-incoming-dirs' documentation) into which PDF files should be \
+  "Name of the subdirectory for PDFs.
+
+Name of the directory inside the to-directory (see
+`org-incoming-dirs' documentation) into which PDF files should be
 moved.
 
 This can be overridden per folder pair.  Add \":pdf-subdir <setting>\" to
@@ -176,7 +180,9 @@ the folder pair plist."
   :group 'org-incoming
   :type '(string))
 (defcustom org-incoming-use-roam nil
-  "Set to non-nil to create `org-roam' files instead of plain org \
+  "Set to non-nil to create `org-roam' files.
+
+Set to non-nil to create `org-roam' files instead of plain org
 files as annotations.  This requires `org-roam' to be installed.
 
 This can be overridden per folder pair.  Add \":use-roam <setting>\" to
@@ -201,7 +207,7 @@ actual widget as WIDGET."
 (defun org-incoming--datewidget--validate (widget)
   "Function to validate a datewidget.
 
-Pass the widget as WIDGET.  Returns nil as success and calls 'widget-put
+Pass the widget as WIDGET.  Returns nil as success and calls `widget-put
 :error' on error."
   (-let (((_sec _min _hour day mon year _dow _dst _tz)
           (parse-time-string (widget-value widget))))
@@ -238,8 +244,9 @@ a :SETTING-NAME in the current folder pair plist."
       (symbol-value (intern variable-name)))))
 
 (defun org-incoming--sanitize-filename (fname)
-  "Return a sanitized version of FNAME  that does not contain any \
-problematic characters."
+  "Return a sanitized version of FNAME.
+
+A sanitized name does not contain any problematic characters."
   (replace-regexp-in-string "[#<>$+%/\\!`&'|{}?\"=:]" "_" fname))
 
 (defun org-incoming--cleanup-tempdir (&optional force)
@@ -292,11 +299,13 @@ destination path to be passed in DEST."
 
 
 (defun org-incoming--permissive-rename-file (source dest)
-  "Move a file like 'rename-file', but handle the error that \
+  "Move a file like `rename-file'.
+
+Move a file like `rename-file', but handle the error that
 permissions cannot be set at the target.
 
-Moves SOURCE to DEST.  In the case permissions cannot be set, the file is
-moved without permissions being transferred."
+Moves SOURCE to DEST.  In the case permissions cannot be set, the
+file is moved without permissions being transferred."
   (condition-case errvar
       (rename-file source dest)
     (file-error (org-incoming--handle-file-error errvar source dest))))
@@ -407,7 +416,7 @@ Should not be set manually."
 (defun org-incoming--guess-date (fname)
   "Guess a date from the filename FNAME.
 
-This uses the 'parse-date-pattern' and 'parse-date-re' settings."
+This uses the `parse-date-pattern' and `parse-date-re' settings."
   (catch 'myexit
     (when (or (null org-incoming-parse-date-pattern)
               (null org-incoming-parse-date-re))
@@ -673,7 +682,9 @@ Sets title and date from CUR-NAME and CUR-DATE."
   (directory-files sourcedir 't ".*\\.pdf"))
 
 (defun org-incoming--next-in-dir (dir-plist)
-  "Start processing the next PDF file in the folder pair indicated \
+  "Start processing the next PDF file.
+
+Start processing the next PDF file in the folder pair indicated
 by the plist DIR-PLIST."
   (unless (or (eq org-incoming--cur-phase 'inactive)
               (eq org-incoming--cur-phase 'skipped)
