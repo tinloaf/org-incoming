@@ -41,6 +41,7 @@
 ;;; Code:
 
 (require 'widget)
+(require 'wid-edit)
 (require 'dash)
 (require 'datetime)
 (require 's)
