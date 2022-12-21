@@ -1,3 +1,5 @@
+[![MELPA](https://melpa.org/packages/org-incoming-badge.svg)](https://melpa.org/#/org-incoming)
+	
 This is `org-incoming`, a package to ingest PDF files into your `org` or `org-roam` files.
 
 This package is intended to help you if you have a large number of "incoming" PDF files,
@@ -11,9 +13,10 @@ into my org files.
 
 # Installation
 
-This package is not yet on MELPA or any other repository. To install it manually, clone the
-repository or get the `org-incoming.el` file by some other means and put it in your Emacs'
-`load-path`. After that, all you need to do is
+This package is available on MELPA. So, if you have MELPA you can do ~M-x package-install
+org-incoming RET~. Alternativerly, to install it manually, clone the repository or get the
+`org-incoming.el` file by some other means and put it in your Emacs' `load-path`. After that, all
+you need to do is
 
 ```
 (require 'org-incoming)
