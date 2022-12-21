@@ -13,8 +13,8 @@ into my org files.
 
 # Installation
 
-This package is available on MELPA. So, if you have MELPA you can do ~M-x package-install
-org-incoming RET~. Alternativerly, to install it manually, clone the repository or get the
+This package is available on MELPA. So, if you have MELPA you can do `M-x package-install
+org-incoming RET`. Alternativerly, to install it manually, clone the repository or get the
 `org-incoming.el` file by some other means and put it in your Emacs' `load-path`. After that, all
 you need to do is
 
