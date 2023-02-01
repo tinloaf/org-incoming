@@ -244,9 +244,9 @@ Pass the widget as WIDGET.  Returns nil as success and calls `widget-put
 :error' on error."
   (-let (((_sec _min _hour day mon year _dow _dst _tz)
           (parse-time-string (widget-value widget))))
-    (if (not (or (eq year nil)
-                 (eq mon nil)
-                 (eq day nil)))
+    (if (not (or (null year)
+                 (null mon)
+                 (null day)))
         nil ;; This is 'success'
       ;; Else: Set the error message
       (widget-put widget :error "Invalid date")
