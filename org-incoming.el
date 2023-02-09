@@ -403,8 +403,7 @@ processed again."
   (when (buffer-live-p org-incoming--org-buf)
     (kill-buffer org-incoming--org-buf))
 
-  (when (eq org-incoming--cur-phase 'named)
-    (org-incoming--cleanup-tempdir 't))
+  (org-incoming--cleanup-tempdir 't)
 
   (add-to-list 'org-incoming--skipped org-incoming--cur-source-original)
   (setq org-incoming--cur-phase 'skipped)
